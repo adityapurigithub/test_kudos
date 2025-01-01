@@ -76,7 +76,7 @@ const Navbar = () => {
             </Button>
             <Button
               variant="contained"
-              color="success"
+              color="error"
               onClick={() => {
                 localStorage.clear();
                 navigate("/");

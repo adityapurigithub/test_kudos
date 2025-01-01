@@ -12,7 +12,7 @@ const Form = ({ handleSubmit, title, formContent }) => {
         p: { md: 4, xs: 2 },
         borderRadius: 3,
         boxShadow: "0 0 4px rgba(14, 10, 27, 0.2)",
-        backdropFilter: "blur(12px)",
+        backdropFilter: "blur(4px)",
       }}
       onSubmit={handleSubmit}
     >

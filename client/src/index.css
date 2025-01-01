@@ -45,6 +45,6 @@
   top: 10px;
   left: 10px;
   right: 10px;
-  box-shadow: 0 0 4px rgba(14, 10, 27, 0.2);
-  background-color: rgba(22, 56, 227, 0.6);
+  box-shadow: 0 0 10px rgba(14, 10, 27, 0.4);
+  background-color: rgba(73, 98, 225, 0.6);
 }
