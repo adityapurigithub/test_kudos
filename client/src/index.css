@@ -1,0 +1,50 @@
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+}
+
+::-webkit-scrollbar {
+  height: 6px;
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1db;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #3d81ff;
+  border-radius: 6px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.bg-wrapper {
+  background-image: url("./assets/bg.png");
+  background-size: cover;
+  background-position: center;
+  position: fixed;
+  inset: 0;
+  filter: blur(1px);
+  opacity: 0.4;
+  z-index: -1;
+}
+
+.bg-wrapper-bottom {
+  rotate: 180deg;
+}
+
+.navbar {
+  backdrop-filter: blur(16px);
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  right: 10px;
+  box-shadow: 0 0 4px rgba(14, 10, 27, 0.2);
+  background-color: rgba(22, 56, 227, 0.6);
+}
