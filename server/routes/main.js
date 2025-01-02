@@ -6,6 +6,7 @@ import {
   giveKudos,
   getAllKudos,
   likeKudo,
+  getAnalyticsData,
 } from "../controllers/main.js";
 
 const router = express.Router();
@@ -21,5 +22,7 @@ router.post("/give-kudos", giveKudos);
 router.get("/all-kudos", getAllKudos);
 
 router.put("/like-kudo/:id", likeKudo);
+
+router.get("/analytics", getAnalyticsData);
 
 export default router;

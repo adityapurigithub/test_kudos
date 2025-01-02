@@ -1,6 +1,8 @@
 import { Box, Button, Stack, TextField } from "@mui/material";
 import axios from "axios";
 import React from "react";
+import toast from "react-hot-toast";
+
 import { useNavigate } from "react-router";
 import Form from "../components/Form";
 
@@ -12,8 +14,7 @@ const Home = () => {
     localStorage.setItem("userId", user._id);
     localStorage.setItem("userName", user.name);
     localStorage.setItem("userEmail", user.email);
-
-    alert("Login successful");
+    toast.success("Login successful");
     navigate("/dashboard");
   };
 

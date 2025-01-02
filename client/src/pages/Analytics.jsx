@@ -3,6 +3,7 @@ import Chart from "chart.js/auto";
 import {
   Box,
   Card,
+  CardHeader,
   Grid2 as Grid,
   Table,
   TableBody,
@@ -10,29 +11,56 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  Typography,
 } from "@mui/material";
 import { CategoryScale } from "chart.js";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import Loader from "../components/Loader";
+import { GoHeart, GoHeartFill } from "react-icons/go";
 
 Chart.register(CategoryScale);
 
 const Analytics = () => {
-  function createData(name, calories, fat, carbs, protein) {
-    return { name, calories, fat, carbs, protein };
-  }
+  const [loading, setLoading] = useState(true);
+  const [chartData, setChartData] = useState([]);
+  const [tableData, setTableData] = useState([]);
+  const [mostLikedKudo, setMostLikedKudo] = useState(null);
 
-  const rows = [
-    createData("Frozen yoghurt", 159, 6.0, 24, 4.0),
-    createData("Ice cream sandwich", 237, 9.0, 37, 4.3),
-    createData("Eclair", 262, 16.0, 24, 6.0),
-    createData("Cupcake", 305, 3.7, 67, 4.3),
-    createData("Gingerbread", 356, 16.0, 49, 3.9),
-    createData("Jelly bean", 375, 0.0, 94, 0.0),
-  ];
+  const getAnalyticsData = async () => {
+    try {
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/analytics`);
+      setChartData(res.data.data.chartsData);
+      setTableData(res.data.data.tableData);
+      setMostLikedKudo(res.data.data.mostLikedKudo);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    setTimeout(() => getAnalyticsData(), 1000);
+  }, []);
+
+  console.log(mostLikedKudo);
+
+  const rows = tableData.map((row) => {
+    return {
+      name: row._id,
+      count: row.totalKudos,
+    };
+  });
+
+  if (loading) {
+    return <Loader />;
+  }
 
   return (
     <Box display="flex" flexDirection="column" gap={{ md: 4, xs: 2 }}>
       <Grid container spacing={2}>
-        <Grid size={{ md: 6, xs: 12 }}>
+        <Grid size={{ md: 8, xs: 12 }}>
           <Card
             sx={{
               p: 4,
@@ -41,39 +69,32 @@ const Analytics = () => {
             }}
           >
             <Bar
+              height={140}
               data={{
-                labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
+                labels: chartData.map((d) => d._id),
                 datasets: [
                   {
-                    label: "# of Votes",
-                    data: [12, 19, 3, 5, 2, 3],
+                    label: "Total Kudos",
+                    data: chartData.map((d) => d.totalKudos),
                     backgroundColor: [
-                      "rgba(255, 99, 132, 0.2)",
-                      "rgba(54, 162, 235, 0.2)",
-                      "rgba(255, 206, 86, 0.2)",
-                      "rgba(75, 192, 192, 0.2)",
-                      "rgba(153, 102, 255, 0.2)",
-                      "rgba(255, 159, 64, 0.2)",
+                      "#3e95cd",
+                      "#8e5ea2",
+                      "#3cba9f",
+                      "#e8c3b9",
+                      "#c45850",
                     ],
-                    borderColor: [
-                      "rgba(255, 99, 132, 1)",
-                      "rgba(54, 162, 235, 1)",
-                      "rgba(255, 206, 86, 1)",
-                      "rgba(75, 192, 192, 1)",
-                      "rgba(153, 102, 255, 1)",
-                      "rgba(255, 159, 64, 1)",
-                    ],
-                    borderWidth: 1,
                   },
                 ],
               }}
-              height={160}
               options={{
                 hoverBorderColor: "red",
                 responsive: true,
                 scales: {
                   y: {
                     beginAtZero: true,
+                    ticks: {
+                      stepSize: 1,
+                    },
                   },
                 },
               }}
@@ -81,7 +102,7 @@ const Analytics = () => {
           </Card>
         </Grid>
 
-        <Grid size={{ md: 6, xs: 12 }}>
+        <Grid size={{ md: 4, xs: 12 }}>
           <Card
             sx={{
               p: 4,
@@ -90,14 +111,16 @@ const Analytics = () => {
             }}
           >
             <TableContainer component={Box} sx={{ maxHeight: 350 }}>
-              <Table stickyHeader aria-label="simple table">
-                <TableHead>
+              <Table stickyHeader>
+                <TableHead
+                  sx={{
+                    fontWeight: "bolder",
+                    backgroundColor: "rgba(72, 32, 205, 0.2)",
+                  }}
+                >
                   <TableRow>
-                    <TableCell>Dessert (100g serving)</TableCell>
-                    <TableCell align="right">Calories</TableCell>
-                    <TableCell align="right">Fat&nbsp;(g)</TableCell>
-                    <TableCell align="right">Carbs&nbsp;(g)</TableCell>
-                    <TableCell align="right">Protein&nbsp;(g)</TableCell>
+                    <TableCell>Users</TableCell>
+                    <TableCell align="right">Kudos Received</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -109,10 +132,7 @@ const Analytics = () => {
                       <TableCell component="th" scope="row">
                         {row.name}
                       </TableCell>
-                      <TableCell align="right">{row.calories}</TableCell>
-                      <TableCell align="right">{row.fat}</TableCell>
-                      <TableCell align="right">{row.carbs}</TableCell>
-                      <TableCell align="right">{row.protein}</TableCell>
+                      <TableCell align="right">{row.count}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -121,6 +141,57 @@ const Analytics = () => {
           </Card>
         </Grid>
       </Grid>
+      <Card
+        sx={{
+          borderRadius: 3,
+          boxShadow: "0 0 4px rgba(14, 10, 27, 0.2)",
+        }}
+      >
+        <CardHeader
+          title={
+            <>
+              <GoHeartFill size={30} color="red" /> Most Liked Kudo{" "}
+              <GoHeartFill size={30} color="red" />
+            </>
+          }
+          sx={{
+            textAlign: "center",
+            backgroundColor: "rgba(72, 32, 205, 0.2)",
+            "& .MuiCardHeader-title": {
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: 1,
+            },
+          }}
+        />
+        {mostLikedKudo && (
+          <Box
+            sx={{
+              p: 3,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: 2,
+            }}
+          >
+            <Typography variant="h5" sx={{ textTransform: "capitalize" }}>
+              {mostLikedKudo.sender} gave &ldquo;{mostLikedKudo.badge}&rdquo;
+              badge to {mostLikedKudo.receiver}
+            </Typography>
+            <Typography
+              variant="body1"
+              color="gray"
+              sx={{
+                wordBreak: "break-word",
+                fontSize: { md: "1rem", xs: "0.8rem", fontStyle: "italic" },
+              }}
+            >
+              {mostLikedKudo.kudoMessage}
+            </Typography>
+          </Box>
+        )}
+      </Card>
     </Box>
   );
 };

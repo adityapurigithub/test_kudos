@@ -42,7 +42,7 @@ const Navbar = () => {
       alignItems="center"
       justifyContent="space-between"
       gap={1}
-      zIndex={2}
+      zIndex={99}
     >
       <Box
         display="flex"

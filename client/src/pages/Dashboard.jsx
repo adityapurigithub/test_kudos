@@ -2,12 +2,14 @@ import { Box, Card, Stack, Typography } from "@mui/material";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { GoHeart, GoHeartFill } from "react-icons/go";
+import Loader from "../components/Loader";
 
 const Dashboard = () => {
   const loggedInUser = localStorage.getItem("userName");
   const loggedInUserId = localStorage.getItem("userId");
 
   const [allKudos, setAllKudos] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const getAllKudos = async () => {
     try {
@@ -26,16 +28,16 @@ const Dashboard = () => {
       setAllKudos(formattedKudos);
     } catch (error) {
       console.log(error);
+    } finally {
+      setLoading(false);
     }
   };
 
   const onLikeSuccess = (data) => {
-    console.log(data);
     getAllKudos();
   };
 
   const handleLike = async (id) => {
-    console.log(id);
     try {
       const res = await axios.put(
         `${import.meta.env.VITE_API_URL}/like-kudo/${id}`,
@@ -51,8 +53,10 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
-    getAllKudos();
+    setTimeout(() => getAllKudos(), 1000);
   }, []);
+
+  if (loading) return <Loader />;
 
   return (
     <Box
@@ -98,7 +102,11 @@ const Dashboard = () => {
                     <Stack gap={1}>
                       <Typography
                         variant="h5"
-                        fontSize={{ md: "1.2rem", xs: "1rem" }}
+                        fontSize={{
+                          md: "1.2rem",
+                          xs: "1rem",
+                          textTransform: "capitalize",
+                        }}
                       >
                         {sender} gave &ldquo;{kudo}&rdquo; badge to {receiver}
                       </Typography>

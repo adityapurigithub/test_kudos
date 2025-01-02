@@ -184,3 +184,35 @@ export const likeKudo = async (req, res) => {
     });
   }
 };
+
+export const getAnalyticsData = async (req, res) => {
+  try {
+    const analyticsTableData = await Kudos.aggregate([
+      { $group: { _id: "$receiver", totalKudos: { $sum: 1 } } },
+      { $sort: { totalKudos: -1 } },
+    ]);
+
+    const analyticsChartsData = await Kudos.aggregate([
+      { $group: { _id: "$badge", totalKudos: { $sum: 1 } } },
+      { $sort: { totalKudos: -1 } },
+    ]);
+
+    const mostLikedKudo = await Kudos.findOne().sort({ likes: -1 });
+
+    return res.status(200).json({
+      success: true,
+      message: "Analytics data retrieved successfully",
+      data: {
+        tableData: analyticsTableData,
+        chartsData: analyticsChartsData,
+        mostLikedKudo,
+      },
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch analytics data",
+      data: null,
+    });
+  }
+};
