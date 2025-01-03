@@ -42,7 +42,7 @@ npm install
 cd ../client
 npm install
 
-# Start the backend server:
+# Start the backend server: **IMP : please remove the .txt extension from server.js file**
 cd server
 npm run server
 
